@@ -1,0 +1,193 @@
+<LinearLayout
+    android:id="@+id/dictionary_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:keychar="http://schemas.android.com/apk/res/com.example.testwidget"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    
+    <ListView
+        android:id="@+id/widgetLetterView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="40"
+        ></ListView>
+    
+    <LinearLayout 
+        android:id="@+id/keyboard"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="60"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+		>
+    
+    <LinearLayout
+        android:id="@+id/keyboard_row1"
+        android:layout_height="wrap_content"       
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="0dp"		
+        >
+        
+    <ImageButton
+        android:id="@+id/q_button"
+        style="@style/CharKey"
+        keychar:key_character="q"
+        />
+    
+    <ImageButton
+        android:id="@+id/w_button"
+        style="@style/CharKey.Internal"
+        keychar:key_character="w"
+        />
+    
+    <ImageButton
+        android:id="@+id/e_button"
+        style="@style/CharKey.Internal"	
+        />
+     <ImageButton
+        android:id="@+id/r_button"
+        style="@style/CharKey.Internal"
+        />
+    <ImageButton
+        android:id="@+id/t_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+    <ImageButton
+        android:id="@+id/y_button"
+        style="@style/CharKey.Internal"		
+        />
+     <ImageButton
+        android:id="@+id/u_button"
+        style="@style/CharKey.Internal"
+        />
+    <ImageButton
+        android:id="@+id/i_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+    <ImageButton
+        android:id="@+id/o_button"
+        style="@style/CharKey.Internal"		
+        />
+    
+    <ImageButton
+        android:id="@+id/p_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/keyboard_row2"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="0dp"
+		android:gravity="center_horizontal"
+        >
+        
+    <ImageButton
+        android:id="@+id/a_button"
+        style="@style/CharKey"
+        />
+    
+    <ImageButton
+        android:id="@+id/s_button"
+        style="@style/CharKey.Internal"        
+        />
+    
+    <ImageButton
+        android:id="@+id/d_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+     <ImageButton
+        android:id="@+id/f_button"
+        style="@style/CharKey.Internal"
+        />
+     
+    <ImageButton
+        android:id="@+id/g_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+    <ImageButton
+        android:id="@+id/h_button"
+        style="@style/CharKey.Internal"		
+        />
+     <ImageButton
+        android:id="@+id/j_button"
+        style="@style/CharKey.Internal"
+        />
+    <ImageButton
+        android:id="@+id/k_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+    <ImageButton
+        android:id="@+id/l_button"
+        style="@style/CharKey.Internal"		
+        />
+    
+    <ImageButton
+        android:id="@+id/delete_button"
+        android:layout_height="52dp"
+        android:layout_width="40dp"
+        style="@style/DeleteKey"
+        />
+    
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/keyboard_row3"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="0dp"
+		android:gravity="center_horizontal"
+        >
+        
+    <ImageButton
+        android:id="@+id/z_button"
+        style="@style/CharKey"
+        />
+    
+    <ImageButton
+        android:id="@+id/x_button"
+        style="@style/CharKey.Internal"        
+        />
+    
+    <ImageButton
+        android:id="@+id/c_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+     <ImageButton
+        android:id="@+id/v_button"
+        style="@style/CharKey.Internal"
+        />
+     
+    <ImageButton
+        android:id="@+id/b_button"
+        style="@style/CharKey.Internal"	
+        />
+    
+    <ImageButton
+        android:id="@+id/n_button"
+        style="@style/CharKey.Internal"		
+        />
+    
+     <ImageButton
+        android:id="@+id/m_button"
+        style="@style/CharKey.Internal"
+        />
+         
+    </LinearLayout>
+    
+    </LinearLayout>
+    
+</LinearLayout>

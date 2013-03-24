@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:drawable="@drawable/keypress_bg"
+        android:state_pressed="false"
+        >
+        
+    </item>
+    <item android:right="5dp" android:left="5dp"
+        android:top="12dp" android:bottom="12dp">
+        <bitmap android:src="@drawable/sym_keyboard_delete"
+            />
+        
+    </item>
+</layer-list>
