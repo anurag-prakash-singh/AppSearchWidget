@@ -1,13 +1,21 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="CharKey">
-        <item name="android:layout_height">@dimen/key_char_height</item>
         <item name="android:layout_width">@dimen/key_char_width</item>
+        <item name="android:layout_height">@dimen/key_char_height</item>
         <item name="android:background">@drawable/keypress_bg</item>
     </style>
     
     <style name="DeleteKey">
         <item name="android:background">@drawable/delete_key</item>
+        <item name="android:layout_marginLeft">@dimen/delete_key_left_gap</item>
+    </style>
+    
+    <style name="ModeKey">
+        <item name="android:layout_width">@dimen/mode_key_width</item>
+        <item name="android:layout_height">@dimen/mode_key_height</item>
+        <item name="android:background">@drawable/keypress_bg</item>
+        <item name="android:layout_marginRight">@dimen/mode_key_right_gap</item>
     </style>
     
     <style name="CharKey.Internal">

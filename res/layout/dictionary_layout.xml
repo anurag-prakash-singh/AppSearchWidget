@@ -28,7 +28,8 @@
         android:layout_height="wrap_content"       
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_marginTop="0dp"		
+        android:layout_marginTop="0dp"
+        android:gravity="center_horizontal"	
         >
         
     <ImageButton
@@ -133,13 +134,6 @@
         style="@style/CharKey.Internal"		
         />
     
-    <ImageButton
-        android:id="@+id/delete_button"
-        android:layout_height="52dp"
-        android:layout_width="40dp"
-        style="@style/DeleteKey"
-        />
-    
     </LinearLayout>
     
     <LinearLayout
@@ -150,7 +144,12 @@
         android:layout_marginTop="0dp"
 		android:gravity="center_horizontal"
         >
-        
+    
+    <ImageButton
+        android:id="@+id/shift_button"
+        style="@style/ModeKey"
+        />
+            
     <ImageButton
         android:id="@+id/z_button"
         style="@style/CharKey"
@@ -183,7 +182,14 @@
     
      <ImageButton
         android:id="@+id/m_button"
-        style="@style/CharKey.Internal"
+        style="@style/CharKey"
+        />
+     
+     <ImageButton
+        android:id="@+id/delete_button"
+        android:layout_height="52dp"
+        android:layout_width="40dp"
+        style="@style/DeleteKey"
         />
          
     </LinearLayout>

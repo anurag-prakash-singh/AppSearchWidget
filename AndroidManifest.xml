@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.testwidget"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.testwidget.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <receiver android:name="NewsWidgetProvider" android:label="AANews">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.example.testwidget.NEW_ITEMS" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/news_appwidget_info"
+                />
+        </receiver>
+        
+        <receiver android:name="LettersWidgetProvider" android:label="AADictionary">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/dictionary_appwidget_info"
+                />
+        </receiver>
+        
+        <service android:name=".InputHandlerService"></service>
+        
+        <service android:name=".LettersRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            >            
+        </service>
+        
+        <service android:name=".AppSearchService">
+        </service>
+        
+    </application>
+
+</manifest>

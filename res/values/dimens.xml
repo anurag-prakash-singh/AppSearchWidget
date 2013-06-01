@@ -5,4 +5,8 @@
     <dimen name="key_char_vertical_offset">5dp</dimen>
     <dimen name="delete_char_height">52dp</dimen>
     <dimen name="delete_char_width">40dp</dimen>
+    <dimen name="delete_key_left_gap">5dp</dimen>
+    <dimen name="mode_key_height">52dp</dimen>
+    <dimen name="mode_key_width">40dp</dimen>
+    <dimen name="mode_key_right_gap">5dp</dimen>
 </resources>

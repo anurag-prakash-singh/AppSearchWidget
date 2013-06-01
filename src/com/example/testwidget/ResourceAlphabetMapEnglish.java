@@ -11,16 +11,16 @@ public class ResourceAlphabetMapEnglish {
 	private static List<Integer> mResourceIds;
 	
 	static {
-		mIdLetterMap.put(R.id.q_button, "q");
-		mIdLetterMap.put(R.id.w_button, "w");
-		mIdLetterMap.put(R.id.e_button, "e");
-		mIdLetterMap.put(R.id.r_button, "r");
-		mIdLetterMap.put(R.id.t_button, "t");
-		mIdLetterMap.put(R.id.y_button, "y");
-		mIdLetterMap.put(R.id.u_button, "u");
-		mIdLetterMap.put(R.id.i_button, "i");
-		mIdLetterMap.put(R.id.o_button, "o");
-		mIdLetterMap.put(R.id.p_button, "p");
+		mIdLetterMap.put(R.id.q_button, "q1");
+		mIdLetterMap.put(R.id.w_button, "w2");
+		mIdLetterMap.put(R.id.e_button, "e3");
+		mIdLetterMap.put(R.id.r_button, "r4");
+		mIdLetterMap.put(R.id.t_button, "t5");
+		mIdLetterMap.put(R.id.y_button, "y6");
+		mIdLetterMap.put(R.id.u_button, "u7");
+		mIdLetterMap.put(R.id.i_button, "i8");
+		mIdLetterMap.put(R.id.o_button, "o9");
+		mIdLetterMap.put(R.id.p_button, "p0");
 		
 		mIdLetterMap.put(R.id.a_button, "a");
 		mIdLetterMap.put(R.id.s_button, "s");
