@@ -18,17 +18,22 @@ containing a value of this type.
          */
         public static final int key_character=0x7f010000;
     }
+    public static final class color {
+        public static final int app_name_bg_color=0x7f050000;
+    }
     public static final class dimen {
-        public static final int delete_char_height=0x7f050004;
-        public static final int delete_char_width=0x7f050005;
-        public static final int delete_key_left_gap=0x7f050006;
-        public static final int key_char_gap=0x7f050002;
-        public static final int key_char_height=0x7f050001;
-        public static final int key_char_vertical_offset=0x7f050003;
-        public static final int key_char_width=0x7f050000;
-        public static final int mode_key_height=0x7f050007;
-        public static final int mode_key_right_gap=0x7f050009;
-        public static final int mode_key_width=0x7f050008;
+        public static final int app_icon_size=0x7f06000b;
+        public static final int app_list_row_min_height=0x7f06000a;
+        public static final int delete_char_height=0x7f060004;
+        public static final int delete_char_width=0x7f060005;
+        public static final int delete_key_left_gap=0x7f060006;
+        public static final int key_char_gap=0x7f060002;
+        public static final int key_char_height=0x7f060001;
+        public static final int key_char_vertical_offset=0x7f060003;
+        public static final int key_char_width=0x7f060000;
+        public static final int mode_key_height=0x7f060007;
+        public static final int mode_key_right_gap=0x7f060009;
+        public static final int mode_key_width=0x7f060008;
     }
     public static final class drawable {
         public static final int btn_keyboard_key_dark_normal_holo=0x7f020000;
@@ -48,44 +53,45 @@ containing a value of this type.
         public static final int test_button_pressed_1=0x7f02000e;
     }
     public static final class id {
-        public static final int a_button=0x7f09000f;
-        public static final int b_button=0x7f09001e;
-        public static final int btnHello=0x7f090023;
-        public static final int c_button=0x7f09001c;
-        public static final int d_button=0x7f090011;
-        public static final int delete_button=0x7f090021;
-        public static final int dictionary_layout=0x7f090000;
-        public static final int e_button=0x7f090006;
-        public static final int f_button=0x7f090012;
-        public static final int g_button=0x7f090013;
-        public static final int h_button=0x7f090014;
-        public static final int i_button=0x7f09000b;
-        public static final int j_button=0x7f090015;
-        public static final int k_button=0x7f090016;
-        public static final int keyboard=0x7f090002;
-        public static final int keyboard_row1=0x7f090003;
-        public static final int keyboard_row2=0x7f09000e;
-        public static final int keyboard_row3=0x7f090018;
-        public static final int l_button=0x7f090017;
-        public static final int letterTextView=0x7f090022;
-        public static final int m_button=0x7f090020;
-        public static final int menu_settings=0x7f090025;
-        public static final int n_button=0x7f09001f;
-        public static final int o_button=0x7f09000c;
-        public static final int p_button=0x7f09000d;
-        public static final int q_button=0x7f090004;
-        public static final int r_button=0x7f090007;
-        public static final int s_button=0x7f090010;
-        public static final int shift_button=0x7f090019;
-        public static final int t_button=0x7f090008;
-        public static final int txtNewsItem=0x7f090024;
-        public static final int u_button=0x7f09000a;
-        public static final int v_button=0x7f09001d;
-        public static final int w_button=0x7f090005;
-        public static final int widgetLetterView=0x7f090001;
-        public static final int x_button=0x7f09001b;
-        public static final int y_button=0x7f090009;
-        public static final int z_button=0x7f09001a;
+        public static final int a_button=0x7f0a000f;
+        public static final int app_icon=0x7f0a0022;
+        public static final int app_name=0x7f0a0023;
+        public static final int b_button=0x7f0a001e;
+        public static final int btnHello=0x7f0a0024;
+        public static final int c_button=0x7f0a001c;
+        public static final int d_button=0x7f0a0011;
+        public static final int delete_button=0x7f0a0021;
+        public static final int dictionary_layout=0x7f0a0000;
+        public static final int e_button=0x7f0a0006;
+        public static final int f_button=0x7f0a0012;
+        public static final int g_button=0x7f0a0013;
+        public static final int h_button=0x7f0a0014;
+        public static final int i_button=0x7f0a000b;
+        public static final int j_button=0x7f0a0015;
+        public static final int k_button=0x7f0a0016;
+        public static final int keyboard=0x7f0a0002;
+        public static final int keyboard_row1=0x7f0a0003;
+        public static final int keyboard_row2=0x7f0a000e;
+        public static final int keyboard_row3=0x7f0a0018;
+        public static final int l_button=0x7f0a0017;
+        public static final int m_button=0x7f0a0020;
+        public static final int menu_settings=0x7f0a0026;
+        public static final int n_button=0x7f0a001f;
+        public static final int o_button=0x7f0a000c;
+        public static final int p_button=0x7f0a000d;
+        public static final int q_button=0x7f0a0004;
+        public static final int r_button=0x7f0a0007;
+        public static final int s_button=0x7f0a0010;
+        public static final int shift_button=0x7f0a0019;
+        public static final int t_button=0x7f0a0008;
+        public static final int txtNewsItem=0x7f0a0025;
+        public static final int u_button=0x7f0a000a;
+        public static final int v_button=0x7f0a001d;
+        public static final int w_button=0x7f0a0005;
+        public static final int widgetLetterView=0x7f0a0001;
+        public static final int x_button=0x7f0a001b;
+        public static final int y_button=0x7f0a0009;
+        public static final int z_button=0x7f0a001a;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -94,14 +100,17 @@ containing a value of this type.
         public static final int news_widget_layout=0x7f030003;
     }
     public static final class menu {
-        public static final int activity_main=0x7f080000;
+        public static final int activity_main=0x7f090000;
     }
     public static final class string {
-        public static final int app_name=0x7f060000;
-        public static final int delete_all_key_identifier=0x7f060004;
-        public static final int delete_key_identifier=0x7f060003;
-        public static final int hello_world=0x7f060001;
-        public static final int menu_settings=0x7f060002;
+        public static final int action_shift_mode=0x7f070007;
+        public static final int app_name=0x7f070000;
+        public static final int delete_all_key_identifier=0x7f070004;
+        public static final int delete_key_identifier=0x7f070003;
+        public static final int hello_world=0x7f070001;
+        public static final int menu_settings=0x7f070002;
+        public static final int shift_key_identifier=0x7f070005;
+        public static final int shift_mode_identifier=0x7f070006;
     }
     public static final class style {
         /** 
@@ -125,15 +134,15 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070004;
+        public static final int AppBaseTheme=0x7f080004;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070005;
-        public static final int CharKey=0x7f070000;
-        public static final int CharKey_Internal=0x7f070003;
-        public static final int DeleteKey=0x7f070001;
-        public static final int ModeKey=0x7f070002;
+        public static final int AppTheme=0x7f080005;
+        public static final int CharKey=0x7f080000;
+        public static final int CharKey_Internal=0x7f080003;
+        public static final int DeleteKey=0x7f080001;
+        public static final int ModeKey=0x7f080002;
     }
     public static final class xml {
         public static final int dictionary_appwidget_info=0x7f040000;

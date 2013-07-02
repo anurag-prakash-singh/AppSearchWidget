@@ -7,5 +7,8 @@
     
     <string name="delete_key_identifier">bksp</string>
     <string name="delete_all_key_identifier">bksp_all</string>
-
+	<string name="shift_key_identifier">shift</string>
+	<string name="shift_mode_identifier">shiftmode</string>
+	<string name="action_shift_mode">com.example.testwidget.SHIFT_MODE</string>
+	
 </resources>

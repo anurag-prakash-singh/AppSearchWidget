@@ -5,23 +5,29 @@ import android.content.Intent;
 import android.util.Log;
 
 public class LetterIntent extends Intent {
+	private boolean mDebug = false;
 	private static final String TAG = "LetterIntent"; 
 	
 	public LetterIntent(Context packageContext, Class<?> cls) {
 		super(packageContext, cls);
-		Log.i(TAG, "Creating letterintent");
+		
+		if (mDebug) {
+			Log.i(TAG, "Creating letterintent");
+		}
 	}
 
 	@Override
 	public boolean filterEquals(Intent other) {
-		Log.i(TAG, "Comparing probable LetterIntents");
+		if (mDebug) {
+			Log.i(TAG, "Comparing probable LetterIntents");
+		}
 		
 		if (other instanceof LetterIntent) {
 			LetterIntent otherLetterIntent = (LetterIntent)other;
 			String letterIntentExtra =
-					this.getStringExtra(AppSearchService.KEY_CHARACTER_EXTRA);
+					this.getStringExtra(KeyInputHandler.KEY_CHARACTER_EXTRA);
 			String otherLetterIntentExtra =
-					otherLetterIntent.getStringExtra(AppSearchService.KEY_CHARACTER_EXTRA);
+					otherLetterIntent.getStringExtra(KeyInputHandler.KEY_CHARACTER_EXTRA);
 			
 			
 			if (letterIntentExtra != null && otherLetterIntentExtra != null) {

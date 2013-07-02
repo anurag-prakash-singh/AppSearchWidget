@@ -48,9 +48,12 @@
         
         <service android:name=".InputHandlerService"></service>
         
-        <service android:name=".LettersRemoteViewsService"
+        <service android:name=".AppListRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             >            
+        </service>
+        
+        <service android:name=".KeyInputHandler">
         </service>
         
         <service android:name=".AppSearchService">

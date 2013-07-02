@@ -34,14 +34,12 @@
         
     <ImageButton
         android:id="@+id/q_button"
-        style="@style/CharKey"
-        keychar:key_character="q"
+        style="@style/CharKey"        
         />
     
     <ImageButton
         android:id="@+id/w_button"
-        style="@style/CharKey.Internal"
-        keychar:key_character="w"
+        style="@style/CharKey.Internal"        
         />
     
     <ImageButton

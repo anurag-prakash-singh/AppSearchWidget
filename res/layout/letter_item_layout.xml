@@ -3,10 +3,25 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:orientation="horizontal"
+    android:background="@color/app_name_bg_color"
+    android:minHeight="@dimen/app_list_row_min_height"
     >
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="@dimen/app_icon_size"
+        android:layout_height="@dimen/app_icon_size"
+        android:layout_marginRight="3dp"  
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"    
+        />
     <TextView
-        android:id="@+id/letterTextView"
+        android:id="@+id/app_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        />    
+        android:layout_gravity="center_vertical"
+        android:ellipsize="marquee" 
+        android:textSize="14sp"
+        android:textStyle="bold"
+        />
 </LinearLayout>

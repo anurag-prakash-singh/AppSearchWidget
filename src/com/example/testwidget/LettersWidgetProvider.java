@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,14 +31,41 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 	private Bitmap mKeyCharBitmap;
 	private Bitmap mModeKeyBitmap;
 	private Bitmap mDeleteKeyBitmap;
+	private Bitmap mUnlockedShiftKeyBitmap;
+	private Bitmap mLockedShiftKeyBitmap;
 	private Paint mCharPaint, mRectPaint;
 	private HashMap<Integer, Bitmap> mKeyCharBitmapTable =
 			new HashMap<Integer, Bitmap>();
 	private int mCurrentKeyboardMode = KeyboardMode.NORMAL_MODE;
+	private boolean mShiftMode = false;
+	private String mEnteredText = "";
+	private AppWidgetManager mWidgetManager;
+	private boolean mDebug = true;
+	
+	private AppWidgetManager getAppWidgetManager(Context context) {
+		if (mWidgetManager == null) {
+			mWidgetManager = AppWidgetManager.getInstance(context);
+		}
+		
+		return mWidgetManager;
+	}
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);
+		
+		// Process the intent.
+		Log.i(TAG, "Received intent:" + intent.getAction());
+		
+		if (intent.getAction().equals(Constants.TEXT_INTENT)) {
+			// Toggle shift mode.
+			mShiftMode = intent.getBooleanExtra(Constants.CURRENT_SHIFT_MODE, false);
+			mEnteredText = intent.getStringExtra(Constants.TYPED_TEXT);
+			
+			getAppWidgetManager(context).updateAppWidget(
+					new ComponentName(context, LettersWidgetProvider.class),
+					buildUpdate(context));			
+		}
 	}
 	
 	private float convertDpToPx(Context context, float dp) {
@@ -147,63 +175,78 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			if (!mKeyCharBitmapTable.containsKey(resourceId)) {
 				// This resource doesn't have a corresponding bitmap.
 				// Create it.
+				int keycharIndex = 0;
+				
+				if (ResourceAlphabetMapEnglish.getLetterForId(resourceId).length() > 1) {
+					if (mShiftMode) {
+						keycharIndex = 1;
+					}
+				}
+				
 				Log.i(TAG, "calling getBitmapForCharacter " + "for " +
-						ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(0));
+						ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(keycharIndex));
 				
 				// TODO: Check the keyboard mode here.
 				mKeyCharBitmapTable.put(resourceId,
 						getBitmapForCharacter(context,
-								ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(0)));
+								ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(keycharIndex)));
 			} else {
 				// Do nothing.
 			}
 		}
 	}
 	
+	private Bitmap getModeKeyBitmap(Context context, boolean shiftMode) {
+		Drawable rawDrawable = null;
+		
+		if (shiftMode == false) {
+			rawDrawable = context.getResources().getDrawable(R.drawable.sym_keyboard_shift_holo);
+		} else {
+			rawDrawable = context.getResources().getDrawable(R.drawable.sym_keyboard_shift_locked_holo);
+		}
+		
+		Bitmap rawBitmap = ((BitmapDrawable)rawDrawable).getBitmap();
+		
+		if (rawBitmap == null) {
+			Log.e(TAG, "No image found for the shift button.");
+			
+			return null;
+		}
+		
+		int rawBitmapWidth = rawBitmap.getWidth();
+		int rawBitmapHeight = rawBitmap.getHeight();
+		int scaledBitmapWidth, scaledBitmapHeight;
+		
+		if (rawBitmapWidth < rawBitmapHeight) {
+			scaledBitmapHeight = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.mode_key_height));
+			scaledBitmapWidth = (int)(scaledBitmapHeight*(rawBitmapWidth/rawBitmapHeight));
+		} else {
+			scaledBitmapWidth = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.mode_key_width));
+			scaledBitmapHeight = (int)(scaledBitmapWidth/(rawBitmapWidth/rawBitmapHeight));
+		}
+		
+		return Bitmap.createScaledBitmap(rawBitmap, scaledBitmapWidth, scaledBitmapHeight,
+				true);
+	}
+	
 	/*
 	 * Set the bitmap for the mode key (normal/shift mode, for example).
 	 */
 	private void setModeKeyBitmap(Context context, RemoteViews lettersViewLayout) {
-		// TODO: Set the mode key bitmap.
 		// Get the bitmap for the mode key.
-		if (mModeKeyBitmap == null) {
-			// Decide on the size of the bitmap to draw.
-			Drawable rawDrawable = context.getResources().getDrawable(R.drawable.sym_keyboard_shift_holo);
-			
-			if (rawDrawable == null) {
-				Log.e(TAG, "No image found for the shift button.");
-				
-				return;
-			}
-			
-			Bitmap rawBitmap = ((BitmapDrawable)rawDrawable).getBitmap();
-					/*BitmapFactory.decodeResource(context.getResources(), R.drawable.sym_bkeyboard_shift);*/
-			
-			if (rawBitmap == null) {
-				Log.e(TAG, "No image found for the shift button.");
-				
-				return;
-			}
-			
-			int rawBitmapWidth = rawBitmap.getWidth();
-			int rawBitmapHeight = rawBitmap.getHeight();
-			int scaledBitmapWidth, scaledBitmapHeight;
-			
-			if (rawBitmapWidth < rawBitmapHeight) {
-				scaledBitmapHeight = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.mode_key_height));
-				scaledBitmapWidth = (int)(scaledBitmapHeight*(rawBitmapWidth/rawBitmapHeight));
-			} else {
-				scaledBitmapWidth = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.mode_key_width));
-				scaledBitmapHeight = (int)(scaledBitmapWidth/(rawBitmapWidth/rawBitmapHeight));
-			}
-			
-			mModeKeyBitmap = Bitmap.createScaledBitmap(rawBitmap, scaledBitmapWidth, scaledBitmapHeight,
-					false);
+		if (mLockedShiftKeyBitmap == null) {
+			mLockedShiftKeyBitmap = getModeKeyBitmap(context, true);
 		}
+		
+		if (mUnlockedShiftKeyBitmap == null) {
+			mUnlockedShiftKeyBitmap = getModeKeyBitmap(context, false);
+		}
+		
+		Log.i(TAG, "shiftmode: " + mShiftMode);
 		
 		// Set the bitmap for the mode key.
 		lettersViewLayout.setBitmap(R.id.shift_button, "setImageBitmap",
-				mModeKeyBitmap);
+				mShiftMode ? mLockedShiftKeyBitmap : mUnlockedShiftKeyBitmap);
 	}
 	
 	private void setDeleteKeyBitmap(Context context) {
@@ -238,7 +281,7 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		
 		// Set the collection view service for the dictionary collection view.
 		try {
-			Intent intent = new Intent(context, LettersRemoteViewsService.class);
+			Intent intent = new Intent(context, AppListRemoteViewsService.class);
 			lettersViewLayout.setRemoteAdapter(R.id.widgetLetterView, intent);
 			
 		} catch(Exception exception) {
@@ -255,12 +298,9 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		for (Integer resourceId : ResourceAlphabetMapEnglish.getResourceIds()) {
 			// Create the intent, add information about the key and
 			// set the pending intent for that key.
-			Log.i(TAG, "Attaching pendingintent for key " +
-					ResourceAlphabetMapEnglish.getLetterForId(resourceId));
-			
-			Intent alphabetKeyPressedIntent = new LetterIntent(context, AppSearchService.class);
-			alphabetKeyPressedIntent.setAction(AppSearchService.KEY_PRESSED_ACTION);
-			alphabetKeyPressedIntent.putExtra(AppSearchService.KEY_CHARACTER_EXTRA,
+			Intent alphabetKeyPressedIntent = new LetterIntent(context, KeyInputHandler.class);
+			alphabetKeyPressedIntent.setAction(KeyInputHandler.KEY_PRESSED_ACTION);
+			alphabetKeyPressedIntent.putExtra(KeyInputHandler.KEY_CHARACTER_EXTRA,
 					ResourceAlphabetMapEnglish.getLetterForId(resourceId));
 			
 			PendingIntent alphabetKeyPressedPendingIntent =
@@ -271,15 +311,57 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		
 		// Special keys.
 		// 'Delete'
-		Intent deleteKeyPressedIntent = new Intent(context, AppSearchService.class);
-		deleteKeyPressedIntent.setAction(AppSearchService.KEY_PRESSED_ACTION);
-		deleteKeyPressedIntent.putExtra(AppSearchService.KEY_CHARACTER_EXTRA,
+		Intent deleteKeyPressedIntent = new Intent(context, KeyInputHandler.class);
+		deleteKeyPressedIntent.setAction(KeyInputHandler.KEY_PRESSED_ACTION);
+		deleteKeyPressedIntent.putExtra(KeyInputHandler.KEY_CHARACTER_EXTRA,
 					context.getString(R.string.delete_key_identifier));
 		PendingIntent deleteKeyPressedPendingIntent =
 				PendingIntent.getService(context, R.id.delete_button,
 						deleteKeyPressedIntent, 0);
 		lettersViewLayout.setOnClickPendingIntent(R.id.delete_button,
 				deleteKeyPressedPendingIntent);
+		
+		// 'Shift'
+		Intent shiftKeyPressedIntent = new Intent(context, KeyInputHandler.class);
+		shiftKeyPressedIntent.setAction(KeyInputHandler.KEY_PRESSED_ACTION);
+		shiftKeyPressedIntent.putExtra(KeyInputHandler.KEY_CHARACTER_EXTRA,
+					context.getString(R.string.shift_key_identifier));
+		PendingIntent shiftKeyPressedPendingIntent =
+				PendingIntent.getService(context, R.id.shift_button,
+						shiftKeyPressedIntent, 0);
+		lettersViewLayout.setOnClickPendingIntent(R.id.shift_button,
+				shiftKeyPressedPendingIntent);
+	}
+	
+	private void updateItemCollection(Context context) {
+		AppWidgetManager appWidgetManager = getAppWidgetManager(context);
+		int[] widgetIDs = appWidgetManager.getAppWidgetIds(
+				new ComponentName(context, LettersWidgetProvider.class));
+		
+		appWidgetManager.notifyAppWidgetViewDataChanged(widgetIDs, R.id.widgetLetterView);
+	}
+	
+	private RemoteViews buildUpdate(Context context) {
+		RemoteViews lettersViewLayout = new RemoteViews(context.getPackageName(),
+				R.layout.dictionary_layout);
+		
+		// Set the collection view service for the dictionary collection view.
+		try {
+			Intent intent = new Intent(context, AppListRemoteViewsService.class);
+			intent.putExtra(Constants.TYPED_TEXT, mEnteredText);
+			lettersViewLayout.setRemoteAdapter(R.id.widgetLetterView, intent);
+		} catch(Exception exception) {
+			exception.printStackTrace();
+		}
+
+		setBitmapsForKeys(lettersViewLayout, context);
+		setModeKeyBitmap(context, lettersViewLayout);
+		attachPendingIntentsToKeys(context, lettersViewLayout);
+		updateItemCollection(context);
+		
+		lettersViewLayout.apply(context, null);
+		
+		return lettersViewLayout;
 	}
 	
 	@Override
@@ -290,7 +372,8 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		 
 		// Set the collection view service for the dictionary collection view.
 		try {
-			Intent intent = new Intent(context, LettersRemoteViewsService.class);
+			Intent intent = new Intent(context, AppListRemoteViewsService.class);
+			intent.putExtra(Constants.TYPED_TEXT, mEnteredText);
 			lettersViewLayout.setRemoteAdapter(R.id.widgetLetterView, intent);
 		} catch(Exception exception) {
 			exception.printStackTrace();
