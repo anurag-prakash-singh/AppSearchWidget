@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         
-        <receiver android:name="NewsWidgetProvider" android:label="AANews">
+        <receiver android:name=".NewsWidgetProvider" android:label="AANews">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -36,7 +36,7 @@
                 />
         </receiver>
         
-        <receiver android:name="LettersWidgetProvider" android:label="AADictionary">
+        <receiver android:name=".LettersWidgetProvider" android:label="AADictionary">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -57,6 +57,9 @@
         </service>
         
         <service android:name=".AppSearchService">
+        </service>
+        
+        <service android:name=".AppLaunchIntentService">
         </service>
         
     </application>

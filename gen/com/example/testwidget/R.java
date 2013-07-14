@@ -34,6 +34,7 @@ containing a value of this type.
         public static final int mode_key_height=0x7f060007;
         public static final int mode_key_right_gap=0x7f060009;
         public static final int mode_key_width=0x7f060008;
+        public static final int widget_min_height=0x7f06000c;
     }
     public static final class drawable {
         public static final int btn_keyboard_key_dark_normal_holo=0x7f020000;
@@ -45,19 +46,21 @@ containing a value of this type.
         public static final int sym_bkeyboard_shift_locked=0x7f020006;
         public static final int sym_keyboard_delete=0x7f020007;
         public static final int sym_keyboard_delete_holo=0x7f020008;
-        public static final int sym_keyboard_shift=0x7f020009;
-        public static final int sym_keyboard_shift_holo=0x7f02000a;
-        public static final int sym_keyboard_shift_locked=0x7f02000b;
-        public static final int sym_keyboard_shift_locked_holo=0x7f02000c;
-        public static final int test_button_not_pressed_1=0x7f02000d;
-        public static final int test_button_pressed_1=0x7f02000e;
+        public static final int sym_keyboard_delete_locked=0x7f020009;
+        public static final int sym_keyboard_shift=0x7f02000a;
+        public static final int sym_keyboard_shift_holo=0x7f02000b;
+        public static final int sym_keyboard_shift_locked=0x7f02000c;
+        public static final int sym_keyboard_shift_locked_holo=0x7f02000d;
+        public static final int test_button_not_pressed_1=0x7f02000e;
+        public static final int test_button_pressed_1=0x7f02000f;
     }
     public static final class id {
         public static final int a_button=0x7f0a000f;
-        public static final int app_icon=0x7f0a0022;
-        public static final int app_name=0x7f0a0023;
+        public static final int app_icon=0x7f0a0023;
+        public static final int app_icon_name_group=0x7f0a0022;
+        public static final int app_name=0x7f0a0024;
         public static final int b_button=0x7f0a001e;
-        public static final int btnHello=0x7f0a0024;
+        public static final int btnHello=0x7f0a0025;
         public static final int c_button=0x7f0a001c;
         public static final int d_button=0x7f0a0011;
         public static final int delete_button=0x7f0a0021;
@@ -75,7 +78,7 @@ containing a value of this type.
         public static final int keyboard_row3=0x7f0a0018;
         public static final int l_button=0x7f0a0017;
         public static final int m_button=0x7f0a0020;
-        public static final int menu_settings=0x7f0a0026;
+        public static final int menu_settings=0x7f0a0027;
         public static final int n_button=0x7f0a001f;
         public static final int o_button=0x7f0a000c;
         public static final int p_button=0x7f0a000d;
@@ -84,7 +87,7 @@ containing a value of this type.
         public static final int s_button=0x7f0a0010;
         public static final int shift_button=0x7f0a0019;
         public static final int t_button=0x7f0a0008;
-        public static final int txtNewsItem=0x7f0a0025;
+        public static final int txtNewsItem=0x7f0a0026;
         public static final int u_button=0x7f0a000a;
         public static final int v_button=0x7f0a001d;
         public static final int w_button=0x7f0a0005;

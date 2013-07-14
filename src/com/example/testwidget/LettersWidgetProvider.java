@@ -21,9 +21,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 public class LettersWidgetProvider extends AppWidgetProvider {
-	private static final String TAG = "LettersWidgetProvider";
+	private static final String TAG = "Kuikk/LettersWidgetProvider";
 	private static final float TEXT_SCALE_FACTOR = 0.80F;
 	private static final float MODE_KEY_SCALE_FACTOR = 0.60F;
 	private Character mKeyCharacter = new Character('w');
@@ -65,6 +66,24 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			getAppWidgetManager(context).updateAppWidget(
 					new ComponentName(context, LettersWidgetProvider.class),
 					buildUpdate(context));			
+		} else if (intent.getAction().equals(Constants.COMPONENT_LAUNCH_INTENT)) {
+			Intent launchIntent = new Intent(Intent.ACTION_MAIN, null);
+			launchIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+			launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			ComponentName launchComponent = new ComponentName(intent.getStringExtra(Constants.COMPONENT_PACKAGE),
+					intent.getStringExtra(Constants.COMPONENT_CLASS));
+			launchIntent.setComponent(launchComponent);
+			
+			Log.i(TAG, launchComponent.getPackageName() + "/" + launchComponent.getClassName());
+			
+			try {
+				context.startActivity(launchIntent);
+			} catch (Exception exception) {
+				exception.printStackTrace();
+				Log.e(TAG, exception.getMessage());
+				Toast.makeText(context, "Failed to launch application.",
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 	
@@ -89,7 +108,6 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			RemoteViews lettersViewLayout = new RemoteViews(context.getPackageName(),
 					R.layout.dictionary_layout);
 			
-//			View keyButtonView = lettersViewLayout.
 			float keyWidthPx = context.getResources().getDimension(R.dimen.key_char_width);
 			float keyHeightPx = context.getResources().getDimension(R.dimen.key_char_height);
 			
@@ -361,6 +379,11 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		
 		lettersViewLayout.apply(context, null);
 		
+		Intent launchTemplateIntent = new Intent(context, LettersWidgetProvider.class);
+		launchTemplateIntent.setAction(Constants.COMPONENT_LAUNCH_INTENT);
+		PendingIntent launchTemplatePendingIntent = PendingIntent.getBroadcast(context, 0, launchTemplateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		lettersViewLayout.setPendingIntentTemplate(R.id.widgetLetterView, launchTemplatePendingIntent);
+		
 		return lettersViewLayout;
 	}
 	
@@ -385,9 +408,16 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		
 		Log.i(TAG, "In onUpdate");
 		
-		appWidgetManager.updateAppWidget(appWidgetIds, lettersViewLayout);
-		
+		appWidgetManager.updateAppWidget(appWidgetIds, lettersViewLayout);		
 		lettersViewLayout.apply(context, null);
+		
+		if (appWidgetIds.length > 0) {
+			Intent launchTemplateIntent = new Intent(context, LettersWidgetProvider.class);
+			launchTemplateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[0]);
+			launchTemplateIntent.setAction(Constants.COMPONENT_LAUNCH_INTENT);
+			PendingIntent launchTemplatePendingIntent = PendingIntent.getActivity(context, 0, launchTemplateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			lettersViewLayout.setPendingIntentTemplate(R.id.widgetLetterView, launchTemplatePendingIntent);
+		}
 		
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 	}	

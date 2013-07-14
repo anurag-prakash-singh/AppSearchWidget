@@ -12,10 +12,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
+import android.text.Html;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
+
+
 
 public class AppListViewFactory implements RemoteViewsFactory {
 	private static final String TAG = "Kuikk/AppListViewFactory";
@@ -26,6 +29,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 	private AppSearchService mAppSearchService;
 	private ArrayList<ApplicationListItem> mSearchedAppListItems =
 			new ArrayList<ApplicationListItem>();
+	private ArrayList<String> mHighlightedSearchResults = new ArrayList<String>();
 	private Object mAppListSynch = new Object();
 	// 2 MB app icon cache should be sufficient -- we may even need to 
 	// reduce this further since this is a widget and we need to keep its
@@ -123,11 +127,23 @@ public class AppListViewFactory implements RemoteViewsFactory {
 						R.layout.letter_item_layout);
 
 		synchronized (mAppListSynch) {
+			if (index > mSearchedAppListItems.size() - 1) {
+				return null;
+			}
+			
 			ApplicationListItem applicationListItem = mSearchedAppListItems.get(index);
 			letterViewLayout.setTextViewText(R.id.app_name,
-					applicationListItem.getApplicationLabel());
+					Html.fromHtml(mHighlightedSearchResults.get(index)));
 			
-			// TODO:
+			Intent fillInLaunchIntent = new Intent();
+			fillInLaunchIntent.putExtra(Constants.COMPONENT_PACKAGE, mSearchedAppListItems.get(index).getComponentName().getPackageName());
+			String componentClassName =  mSearchedAppListItems.get(index).getComponentName().getClassName();
+			
+			fillInLaunchIntent.putExtra(Constants.COMPONENT_CLASS, componentClassName);
+			letterViewLayout.setOnClickFillInIntent(R.id.app_name, fillInLaunchIntent);
+			letterViewLayout.setOnClickFillInIntent(R.id.app_icon, fillInLaunchIntent);
+			letterViewLayout.setOnClickFillInIntent(R.id.app_icon_name_group, fillInLaunchIntent);
+			
 			// Load the icon for this app.
 			// We can block here so it's alright to wait until
 			// the image is loaded (there's no need to offload
@@ -248,6 +264,20 @@ public class AppListViewFactory implements RemoteViewsFactory {
 		if (searchString.length() > 0) {
 			synchronized (mAppListSynch) {
 				mSearchedAppListItems = mAppSearchService.appListForSearchTerm(searchString);
+				mHighlightedSearchResults.clear();
+				
+				// Go through the results and highlight the entered text
+				for (ApplicationListItem appListItem : mSearchedAppListItems) {
+					StringBuffer applicationLabel = new StringBuffer(appListItem.getApplicationLabel());
+					MatchPair matchPair = findSubsequence(applicationLabel.toString(), searchString);
+					
+					if (matchPair.to != -1 && matchPair.from != -1) {
+						applicationLabel.insert(matchPair.to + 1, "</font>");
+						applicationLabel.insert(matchPair.from, "<font color=\"#33b5e5\">");
+					}
+					
+					mHighlightedSearchResults.add(applicationLabel.toString());
+				}
 				
 				// TODO:
 				// We're also tracking the number of times an application was
@@ -264,5 +294,67 @@ public class AppListViewFactory implements RemoteViewsFactory {
 
 	@Override
 	public void onDestroy() {
-	}	
+	}
+	
+	private class MatchPair {
+		public int from = -1;
+		public int to = -1;
+		
+		public String toString() {
+			return from + " - " + to;
+		}
+	}
+	
+	private boolean isAlphaNumeric(char ch) {
+		return (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
+	}
+	
+	private MatchPair findSubsequence(String mainStr, String sequence) {
+		MatchPair matchPair = new MatchPair();
+		char mainChars[] = mainStr.toLowerCase().toCharArray();
+		char sequenceChars[] = sequence.toLowerCase().toCharArray();
+		int sequenceOffset = 0, mainStrOffset = 0;
+		boolean searchComplete = false;
+		int possibleStartOffset = 0;		
+		
+		if (sequence.length() == 0) {
+			matchPair.from = matchPair.to = 0;
+			
+			return matchPair;
+		}
+		
+		while (possibleStartOffset < mainChars.length && !searchComplete) {
+			mainStrOffset = possibleStartOffset;
+			matchPair.from = possibleStartOffset;
+			
+			// From this point, try to search for sequence
+			while (mainStrOffset < mainChars.length && !searchComplete) {
+				if (sequenceChars[sequenceOffset] == mainChars[mainStrOffset]) {
+					sequenceOffset++;
+					mainStrOffset++;
+					
+					if (sequenceOffset >= sequenceChars.length) {
+						searchComplete = true;
+						matchPair.to = mainStrOffset - 1;
+						
+						break;
+					}
+				} else if (!isAlphaNumeric(mainChars[mainStrOffset])) {
+					if (sequenceOffset == 0) {
+						possibleStartOffset++;
+						matchPair.from = possibleStartOffset;
+					}
+					
+					mainStrOffset++;
+				} else {
+					break;
+				}
+			}
+			
+			sequenceOffset = 0;
+			possibleStartOffset++;
+		}
+		
+		return matchPair;
+	}
 }

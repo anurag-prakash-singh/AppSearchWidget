@@ -11,4 +11,5 @@
     <dimen name="mode_key_right_gap">5dp</dimen>
     <dimen name="app_list_row_min_height">40dp</dimen>
     <dimen name="app_icon_size">40dp</dimen>
+    <dimen name="widget_min_height">200dp</dimen>
 </resources>

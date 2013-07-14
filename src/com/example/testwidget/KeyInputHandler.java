@@ -50,7 +50,11 @@ public class KeyInputHandler extends Service {
 				
 				if (mDeleteKeyValue.equals(keyContents)) {
 					if (mLatestInputString.length() >= 1) {
-						mLatestInputString.deleteCharAt(mLatestInputString.length() - 1);
+						if (mShiftMode) {
+							mLatestInputString.replace(0, mLatestInputString.length(), "");
+						} else {
+							mLatestInputString.deleteCharAt(mLatestInputString.length() - 1);
+						}
 					}
 				} else if (mShiftKeyValue.equals(keyContents)) {
 					// Invert the shift mode.
