@@ -46,7 +46,12 @@ public class AppListViewFactory implements RemoteViewsFactory {
 	
 	private void addAppBitmapToCache(String componentName, Bitmap bitmap) {
 		if (getAppBitmapFromCache(componentName) == null) {
-			mAppIconCache.put(componentName, bitmap);
+			if (bitmap != null) {
+				mAppIconCache.put(componentName, bitmap);
+			} else {
+				// TODO
+				// If an icon can't be found, put a place holder instead
+			}
 		}
 	}
 	
@@ -140,8 +145,8 @@ public class AppListViewFactory implements RemoteViewsFactory {
 			String componentClassName =  mSearchedAppListItems.get(index).getComponentName().getClassName();
 			
 			fillInLaunchIntent.putExtra(Constants.COMPONENT_CLASS, componentClassName);
-			letterViewLayout.setOnClickFillInIntent(R.id.app_name, fillInLaunchIntent);
-			letterViewLayout.setOnClickFillInIntent(R.id.app_icon, fillInLaunchIntent);
+//			letterViewLayout.setOnClickFillInIntent(R.id.app_name, fillInLaunchIntent);
+//			letterViewLayout.setOnClickFillInIntent(R.id.app_icon, fillInLaunchIntent);
 			letterViewLayout.setOnClickFillInIntent(R.id.app_icon_name_group, fillInLaunchIntent);
 			
 			// Load the icon for this app.

@@ -20,6 +20,10 @@ public class ApplicationListItem {
 	// - all whitespace removed
 	private String mSimplifiedLabel;
 	
+	public ApplicationListItem(String label, ComponentName componentName) {
+		this(null, null, label, componentName);
+	}
+	
 	public ApplicationListItem(Drawable iconDrawable,
 			Bitmap iconBitmap, String label, ComponentName componentName) {
 		mIconDrawable = iconDrawable;

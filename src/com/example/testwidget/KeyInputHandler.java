@@ -11,6 +11,7 @@ public class KeyInputHandler extends Service {
 	
 	public static final String KEY_PRESSED_ACTION = "KEY_PRESSED_ACTION";
 	public static final String KEY_CHARACTER_EXTRA = "KEY_CHARACTER_EXTRA";
+	public static final String ERASE_ALL_KEY = "bksp_all";
 	
 	private IBinder mAppSearchServiceBinder = new KeyInputHandlerServiceBinder();
 	
@@ -57,9 +58,12 @@ public class KeyInputHandler extends Service {
 						}
 					}
 				} else if (mShiftKeyValue.equals(keyContents)) {
-					// Invert the shift mode.
+					// Invert the shift mode
 					Log.i(TAG, "Shift key pressed.");
 					mShiftMode = !mShiftMode;
+				} else if (ERASE_ALL_KEY.equals(keyContents)) {
+					// Erase the contents of the input
+					mLatestInputString.replace(0, mLatestInputString.length(), "");
 				} else {
 					if (mShiftMode) {
 						// If we're in shift mode, pick the character at position 1.

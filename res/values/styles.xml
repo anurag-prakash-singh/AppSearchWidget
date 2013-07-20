@@ -7,7 +7,9 @@
     </style>
     
     <style name="DeleteKey">
-        <item name="android:background">@drawable/delete_key</item>
+        <item name="android:layout_width">@dimen/delete_char_width</item>
+        <item name="android:layout_height">@dimen/delete_char_height</item>
+        <item name="android:background">@drawable/keypress_bg</item>
         <item name="android:layout_marginLeft">@dimen/delete_key_left_gap</item>
     </style>
     

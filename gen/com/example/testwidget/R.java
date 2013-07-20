@@ -19,6 +19,7 @@ containing a value of this type.
         public static final int key_character=0x7f010000;
     }
     public static final class color {
+        public static final int app_launching_bg_color=0x7f050001;
         public static final int app_name_bg_color=0x7f050000;
     }
     public static final class dimen {
@@ -37,22 +38,23 @@ containing a value of this type.
         public static final int widget_min_height=0x7f06000c;
     }
     public static final class drawable {
-        public static final int btn_keyboard_key_dark_normal_holo=0x7f020000;
-        public static final int btn_keyboard_key_dark_pressed_holo=0x7f020001;
-        public static final int delete_key=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int keypress_bg=0x7f020004;
-        public static final int sym_bkeyboard_shift=0x7f020005;
-        public static final int sym_bkeyboard_shift_locked=0x7f020006;
-        public static final int sym_keyboard_delete=0x7f020007;
-        public static final int sym_keyboard_delete_holo=0x7f020008;
-        public static final int sym_keyboard_delete_locked=0x7f020009;
-        public static final int sym_keyboard_shift=0x7f02000a;
-        public static final int sym_keyboard_shift_holo=0x7f02000b;
-        public static final int sym_keyboard_shift_locked=0x7f02000c;
-        public static final int sym_keyboard_shift_locked_holo=0x7f02000d;
-        public static final int test_button_not_pressed_1=0x7f02000e;
-        public static final int test_button_pressed_1=0x7f02000f;
+        public static final int app_list_item_bg=0x7f020000;
+        public static final int btn_keyboard_key_dark_normal_holo=0x7f020001;
+        public static final int btn_keyboard_key_dark_pressed_holo=0x7f020002;
+        public static final int delete_key=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int keypress_bg=0x7f020005;
+        public static final int sym_bkeyboard_shift=0x7f020006;
+        public static final int sym_bkeyboard_shift_locked=0x7f020007;
+        public static final int sym_keyboard_delete=0x7f020008;
+        public static final int sym_keyboard_delete_holo=0x7f020009;
+        public static final int sym_keyboard_delete_locked=0x7f02000a;
+        public static final int sym_keyboard_shift=0x7f02000b;
+        public static final int sym_keyboard_shift_holo=0x7f02000c;
+        public static final int sym_keyboard_shift_locked=0x7f02000d;
+        public static final int sym_keyboard_shift_locked_holo=0x7f02000e;
+        public static final int test_button_not_pressed_1=0x7f02000f;
+        public static final int test_button_pressed_1=0x7f020010;
     }
     public static final class id {
         public static final int a_button=0x7f0a000f;

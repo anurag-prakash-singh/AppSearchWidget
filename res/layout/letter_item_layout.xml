@@ -1,14 +1,17 @@
 <FrameLayout  
     xmlns:android="http://schemas.android.com/apk/res/android"  
     android:layout_width="fill_parent"  
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:focusable="true"
+    android:clickable="true"
+    >
 <RelativeLayout
     android:id="@+id/app_icon_name_group"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:background="@color/app_name_bg_color"
     android:minHeight="@dimen/app_list_row_min_height"
     android:paddingBottom="2dp"
+    android:background="@drawable/app_list_item_bg"
     >
     <ImageView
         android:id="@+id/app_icon"
@@ -28,8 +31,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_toRightOf="@id/app_icon"
-        android:layout_centerVertical="true"
-		
+        android:layout_centerVertical="true"		
         />
 </RelativeLayout>
 </FrameLayout>

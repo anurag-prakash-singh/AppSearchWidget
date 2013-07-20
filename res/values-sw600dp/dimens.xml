@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="key_char_width">30dp</dimen>
     <dimen name="widget_min_height">360dp</dimen>
 </resources>

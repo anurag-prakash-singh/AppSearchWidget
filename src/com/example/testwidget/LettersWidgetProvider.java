@@ -34,6 +34,8 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 	private Bitmap mDeleteKeyBitmap;
 	private Bitmap mUnlockedShiftKeyBitmap;
 	private Bitmap mLockedShiftKeyBitmap;
+	private Bitmap mUnlockedDeleteKeyBitmap;
+	private Bitmap mLockedDeleteKeyBitmap;
 	private Paint mCharPaint, mRectPaint;
 	private HashMap<Integer, Bitmap> mKeyCharBitmapTable =
 			new HashMap<Integer, Bitmap>();
@@ -78,6 +80,14 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			
 			try {
 				context.startActivity(launchIntent);
+				
+				// App launch successful. Generate an 'erase-all' key event.
+				Intent eraseAllIntent = new LetterIntent(context, KeyInputHandler.class);
+				eraseAllIntent.setAction(KeyInputHandler.KEY_PRESSED_ACTION);
+				eraseAllIntent.putExtra(KeyInputHandler.KEY_CHARACTER_EXTRA,
+						KeyInputHandler.ERASE_ALL_KEY);
+				
+				context.startService(eraseAllIntent);
 			} catch (Exception exception) {
 				exception.printStackTrace();
 				Log.e(TAG, exception.getMessage());
@@ -204,7 +214,6 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 				Log.i(TAG, "calling getBitmapForCharacter " + "for " +
 						ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(keycharIndex));
 				
-				// TODO: Check the keyboard mode here.
 				mKeyCharBitmapTable.put(resourceId,
 						getBitmapForCharacter(context,
 								ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(keycharIndex)));
@@ -212,6 +221,62 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 				// Do nothing.
 			}
 		}
+	}
+	
+	private Bitmap getDeleteKeyBitmap(Context context, boolean shiftMode) {
+		Drawable rawDrawable = null;
+		
+		if (shiftMode == false) {
+			rawDrawable = context.getResources().getDrawable(R.drawable.sym_keyboard_delete);
+		} else {
+			rawDrawable = context.getResources().getDrawable(R.drawable.sym_keyboard_delete_locked);
+		}
+		
+		Bitmap rawBitmap = ((BitmapDrawable)rawDrawable).getBitmap();
+		
+		if (rawBitmap == null) {
+			Log.e(TAG, "No image found for the delete button.");
+			
+			return null;
+		}
+		
+		int rawBitmapWidth = rawBitmap.getWidth();
+		int rawBitmapHeight = rawBitmap.getHeight();
+		int scaledBitmapWidth, scaledBitmapHeight;
+		
+		Log.i(TAG, "Delete key raw bitmap size: " + rawBitmapHeight + " x " + rawBitmapHeight);
+		
+		if (rawBitmapWidth < rawBitmapHeight) {
+			scaledBitmapHeight = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.delete_char_height));
+			scaledBitmapWidth = (int)(scaledBitmapHeight*(rawBitmapWidth/rawBitmapHeight));
+		} else {
+			scaledBitmapWidth = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.delete_char_width));
+			scaledBitmapHeight = (int)(scaledBitmapWidth/(rawBitmapWidth/rawBitmapHeight));
+		}
+		
+		return Bitmap.createScaledBitmap(rawBitmap, scaledBitmapWidth, scaledBitmapHeight,
+				true);
+	}
+	
+	/*
+	 * Set the bitmap for the mode key (normal/shift mode, for example).
+	 */
+	private void setDeleteKeyBitmap(Context context, RemoteViews lettersViewLayout) {
+		// Get the bitmap for the mode key.
+		if (mLockedDeleteKeyBitmap == null) {
+			mLockedDeleteKeyBitmap = getDeleteKeyBitmap(context, true);
+		}
+		
+		if (mUnlockedDeleteKeyBitmap == null) {
+			mUnlockedDeleteKeyBitmap = getDeleteKeyBitmap(context, false);
+		}
+		
+		Log.i(TAG, "shiftmode: " + mShiftMode);
+		Log.i(TAG, "Setting bitmap for delete key");
+		
+		// Set the bitmap for the mode key.
+		lettersViewLayout.setBitmap(R.id.delete_button, "setImageBitmap",
+				mShiftMode ? mLockedDeleteKeyBitmap : mUnlockedDeleteKeyBitmap);
 	}
 	
 	private Bitmap getModeKeyBitmap(Context context, boolean shiftMode) {
@@ -265,10 +330,6 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		// Set the bitmap for the mode key.
 		lettersViewLayout.setBitmap(R.id.shift_button, "setImageBitmap",
 				mShiftMode ? mLockedShiftKeyBitmap : mUnlockedShiftKeyBitmap);
-	}
-	
-	private void setDeleteKeyBitmap(Context context) {
-		
 	}
 	
 	private void setBitmapsForKeys(RemoteViews lettersViewLayout, Context context) {
@@ -374,6 +435,7 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 
 		setBitmapsForKeys(lettersViewLayout, context);
 		setModeKeyBitmap(context, lettersViewLayout);
+		setDeleteKeyBitmap(context, lettersViewLayout);
 		attachPendingIntentsToKeys(context, lettersViewLayout);
 		updateItemCollection(context);
 		
@@ -404,6 +466,7 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		
 		setBitmapsForKeys(lettersViewLayout, context);
 		setModeKeyBitmap(context, lettersViewLayout);
+		setDeleteKeyBitmap(context, lettersViewLayout);
 		attachPendingIntentsToKeys(context, lettersViewLayout);
 		
 		Log.i(TAG, "In onUpdate");
