@@ -44,6 +44,7 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 	private String mEnteredText = "";
 	private AppWidgetManager mWidgetManager;
 	private boolean mDebug = true;
+	private boolean mSpew = false;
 	
 	private AppWidgetManager getAppWidgetManager(Context context) {
 		if (mWidgetManager == null) {
@@ -102,7 +103,9 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		windowManager.getDefaultDisplay().getMetrics(displayMetrics);
 		
-		Log.i(TAG, "dp: " + dp + "; dpi: " + displayMetrics.densityDpi);
+		if (mSpew) {
+			Log.i(TAG, "dp: " + dp + "; dpi: " + displayMetrics.densityDpi);
+		}
 		
 		return dp * displayMetrics.densityDpi/160F;
 	}
@@ -121,8 +124,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			float keyWidthPx = context.getResources().getDimension(R.dimen.key_char_width);
 			float keyHeightPx = context.getResources().getDimension(R.dimen.key_char_height);
 			
-			Log.i(TAG, "widthpx = " + keyWidthPx);
-			Log.i(TAG, "heightpx = " + keyHeightPx);
+			if (mSpew) {
+				Log.i(TAG, "widthpx = " + keyWidthPx);
+				Log.i(TAG, "heightpx = " + keyHeightPx);
+			}
 			
 			mCharPaint.setTextSize(Math.min(keyWidthPx * TEXT_SCALE_FACTOR,
 					keyHeightPx * TEXT_SCALE_FACTOR));
@@ -132,8 +137,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			mKeyCharBitmap = Bitmap.createBitmap(bounds.width() + 2,
 					Math.abs(bounds.bottom - bounds.top) + 2, Config.ARGB_4444);
 			
-			Log.i(TAG, "bounds for " + mKeyCharacter + " : " + bounds.toShortString());
-			Log.i(TAG, "keychar height: " + Math.abs(bounds.bottom - bounds.top));
+			if (mSpew) {
+				Log.i(TAG, "bounds for " + mKeyCharacter + " : " + bounds.toShortString());
+				Log.i(TAG, "keychar height: " + Math.abs(bounds.bottom - bounds.top));
+			}
 		}
 	}
 	
@@ -165,8 +172,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		float keyWidthPx = context.getResources().getDimension(R.dimen.key_char_width);
 		float keyHeightPx = context.getResources().getDimension(R.dimen.key_char_height);
 		
-		Log.i(TAG, "widthpx = " + keyWidthPx);
-		Log.i(TAG, "heightpx = " + keyHeightPx);
+		if (mSpew) {
+			Log.i(TAG, "widthpx = " + keyWidthPx);
+			Log.i(TAG, "heightpx = " + keyHeightPx);
+		}
 		
 		mCharPaint.setTextSize(Math.min(keyWidthPx * TEXT_SCALE_FACTOR,
 				keyHeightPx * TEXT_SCALE_FACTOR));
@@ -187,7 +196,9 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 				(keyWidthPx - bounds.width())/2 - bounds.left,
 				(keyHeightPx)/2 + context.getResources().getDimension(R.dimen.key_char_vertical_offset), mCharPaint);
 		
-		Log.i(TAG, "Text drawn for " + character + " bounds: " + bounds.toString());
+		if (mSpew) {
+			Log.i(TAG, "Text drawn for " + character + " bounds: " + bounds.toString());
+		}
 		
 		return characterBitmap;
 	}
@@ -211,8 +222,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 					}
 				}
 				
-				Log.i(TAG, "calling getBitmapForCharacter " + "for " +
-						ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(keycharIndex));
+				if (mSpew) {
+					Log.i(TAG, "calling getBitmapForCharacter " + "for " +
+							ResourceAlphabetMapEnglish.getLetterForId(resourceId).charAt(keycharIndex));
+				}
 				
 				mKeyCharBitmapTable.put(resourceId,
 						getBitmapForCharacter(context,
@@ -244,7 +257,9 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		int rawBitmapHeight = rawBitmap.getHeight();
 		int scaledBitmapWidth, scaledBitmapHeight;
 		
-		Log.i(TAG, "Delete key raw bitmap size: " + rawBitmapHeight + " x " + rawBitmapHeight);
+		if (mSpew) {
+			Log.i(TAG, "Delete key raw bitmap size: " + rawBitmapHeight + " x " + rawBitmapHeight);
+		}
 		
 		if (rawBitmapWidth < rawBitmapHeight) {
 			scaledBitmapHeight = (int) (MODE_KEY_SCALE_FACTOR * context.getResources().getDimension(R.dimen.delete_char_height));
@@ -271,8 +286,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			mUnlockedDeleteKeyBitmap = getDeleteKeyBitmap(context, false);
 		}
 		
-		Log.i(TAG, "shiftmode: " + mShiftMode);
-		Log.i(TAG, "Setting bitmap for delete key");
+		if (mSpew) {
+			Log.i(TAG, "shiftmode: " + mShiftMode);
+			Log.i(TAG, "Setting bitmap for delete key");
+		}
 		
 		// Set the bitmap for the mode key.
 		lettersViewLayout.setBitmap(R.id.delete_button, "setImageBitmap",
@@ -325,7 +342,9 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			mUnlockedShiftKeyBitmap = getModeKeyBitmap(context, false);
 		}
 		
-		Log.i(TAG, "shiftmode: " + mShiftMode);
+		if (mSpew) {
+			Log.i(TAG, "shiftmode: " + mShiftMode);
+		}
 		
 		// Set the bitmap for the mode key.
 		lettersViewLayout.setBitmap(R.id.shift_button, "setImageBitmap",
@@ -341,7 +360,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		
 		for (Integer resourceId : resourceIds) {
 			if (mKeyCharBitmapTable.containsKey(resourceId)) {
-				Log.i(TAG, "Setting bitmap for resource: " + resourceId);
+				if (mSpew) {
+					Log.i(TAG, "Setting bitmap for resource: " + resourceId);
+				}
+				
 				lettersViewLayout.setBitmap(resourceId, "setImageBitmap",
 						mKeyCharBitmapTable.get(resourceId));
 			}
@@ -356,7 +378,9 @@ public class LettersWidgetProvider extends AppWidgetProvider {
         RemoteViews lettersViewLayout = new RemoteViews(context.getPackageName(),
 				R.layout.dictionary_layout);
 		
-		Log.i(TAG, "Remote view package name: " + lettersViewLayout.getPackage());
+        if (mSpew) {
+        	Log.i(TAG, "Remote view package name: " + lettersViewLayout.getPackage());
+        }
 		
 		// Set the collection view service for the dictionary collection view.
 		try {

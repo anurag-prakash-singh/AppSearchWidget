@@ -3,7 +3,9 @@ package com.example.testwidget;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 public class KeyInputHandler extends Service {
@@ -12,14 +14,45 @@ public class KeyInputHandler extends Service {
 	public static final String KEY_PRESSED_ACTION = "KEY_PRESSED_ACTION";
 	public static final String KEY_CHARACTER_EXTRA = "KEY_CHARACTER_EXTRA";
 	public static final String ERASE_ALL_KEY = "bksp_all";
+	public static final int KICK_WIDGET_PROVIDER = 0x01;
+	public static final int KICK_MESSAGE_SEND_DELAY_MS = 100;
 	
 	private IBinder mAppSearchServiceBinder = new KeyInputHandlerServiceBinder();
 	
 	private StringBuffer mLatestInputString = new StringBuffer(); 
+	private boolean mLatestInputUnread = false;
 	private String mDeleteKeyValue = null;
 	private String mShiftKeyValue = null;
 	private boolean mShiftMode = false;
 	private boolean mAppSearchServiceStarted = false;
+	
+	private Handler mKickSender = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == KICK_WIDGET_PROVIDER) {
+				// If the latest input is still unread, send an intent to
+				// the widget provider with the latest input
+				Log.i(TAG, "Kick received.");
+				
+				if (mLatestInputUnread) {
+					Log.i(TAG, "Kick received. Latest input unread.");
+					
+					Intent enteredTextIntent = new Intent(getApplicationContext(),
+							LettersWidgetProvider.class);
+					
+					enteredTextIntent.setAction(Constants.TEXT_INTENT);
+					enteredTextIntent.putExtra(Constants.CURRENT_SHIFT_MODE,
+							mShiftMode);
+					enteredTextIntent.putExtra(Constants.TYPED_TEXT, mLatestInputString.toString());
+					getApplicationContext().sendBroadcast(enteredTextIntent);
+					
+					// Post this message again
+					Message kickMessage = this.obtainMessage(KICK_WIDGET_PROVIDER);
+					this.sendMessageDelayed(kickMessage, KICK_MESSAGE_SEND_DELAY_MS);
+				}
+			}
+		}		
+	};
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -90,6 +123,13 @@ public class KeyInputHandler extends Service {
 				enteredTextIntent.putExtra(Constants.TYPED_TEXT, mLatestInputString.toString());
 				getApplicationContext().sendBroadcast(enteredTextIntent);
 				
+				// Schedule a kick message to be sent after a small delay.
+				// This is to ensure that the widget provider does not
+				// miss the latest input
+				mLatestInputUnread = true;
+				Message kickMessage = mKickSender.obtainMessage(KICK_WIDGET_PROVIDER);
+				mKickSender.sendMessageDelayed(kickMessage, KICK_MESSAGE_SEND_DELAY_MS);
+				
 				// Send the stored text to the list service (do we need to send the
 				// entire text?)
 				Intent listRefreshIntent = new Intent(getApplicationContext(),
@@ -114,6 +154,7 @@ public class KeyInputHandler extends Service {
 	}
 
 	public String getLatestInputString() {
+		mLatestInputUnread = false;
 		return mLatestInputString.toString();
 	}
 	

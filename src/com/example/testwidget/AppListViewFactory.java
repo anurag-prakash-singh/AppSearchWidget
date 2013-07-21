@@ -145,6 +145,8 @@ public class AppListViewFactory implements RemoteViewsFactory {
 			String componentClassName =  mSearchedAppListItems.get(index).getComponentName().getClassName();
 			
 			fillInLaunchIntent.putExtra(Constants.COMPONENT_CLASS, componentClassName);
+			// Not setting the fill-in intent for the TextView and the icon because
+			// it was preventing the list item selector animation from kicking in
 //			letterViewLayout.setOnClickFillInIntent(R.id.app_name, fillInLaunchIntent);
 //			letterViewLayout.setOnClickFillInIntent(R.id.app_icon, fillInLaunchIntent);
 			letterViewLayout.setOnClickFillInIntent(R.id.app_icon_name_group, fillInLaunchIntent);
@@ -173,7 +175,6 @@ public class AppListViewFactory implements RemoteViewsFactory {
 					fullSizeBitmapCanvas.setBitmap(iconBitmap);
 					fullSizeBitmapCanvas.save();
 					iconDrawable.draw(fullSizeBitmapCanvas);
-//					fullSizeBitmapCanvas.drawColor(R.color.app_name_bg_color);
 					fullSizeBitmapCanvas.restore();
 					fullSizeBitmapCanvas.setBitmap(null);					
 				} catch (NameNotFoundException e) {
@@ -206,8 +207,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 			}
 			
 			// Set the app icon ImageView to appIconBitmap
-			letterViewLayout.setImageViewBitmap(R.id.app_icon, appIconBitmap);	
-//			letterViewLayout.setImageViewResource(R.id.app_icon, R.drawable.sym_bkeyboard_shift);
+			letterViewLayout.setImageViewBitmap(R.id.app_icon, appIconBitmap);
 		}
 		
 		return letterViewLayout;
