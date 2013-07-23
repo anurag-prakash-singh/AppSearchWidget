@@ -4,6 +4,7 @@
     <string name="app_name">TestWidget</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="app_search_prompt">Search for an app</string>
     
     <string name="delete_key_identifier">bksp</string>
     <string name="delete_all_key_identifier">bksp_all</string>

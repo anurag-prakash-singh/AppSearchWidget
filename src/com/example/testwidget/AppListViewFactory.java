@@ -35,6 +35,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 	// reduce this further since this is a widget and we need to keep its
 	// memory footprint low
 	private int mAppIconCacheMaxSizeKb = 2 * 1024;
+	private String mSearchString;
 	
 	private LruCache<String, Bitmap> mAppIconCache = new LruCache<String, Bitmap> (mAppIconCacheMaxSizeKb) {
 		@Override
@@ -86,7 +87,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 			mAppSearchService = appSearchServiceBinder.getService();
 		}
 	};
-	
+
 	public AppListViewFactory(Context context, Intent intent) {
 		Log.i(TAG, "In LetterViewFactory constructor");
 		mContext = context;
@@ -111,7 +112,14 @@ public class AppListViewFactory implements RemoteViewsFactory {
 	@Override
 	public int getCount() {
 		synchronized (mAppListSynch) {
-			return mSearchedAppListItems.size();
+			if (mSearchString == null || mSearchString.equals("")) {
+				return 1;
+			} else if (mSearchString.length() > 0 && mSearchedAppListItems.size() == 0) {
+				// A search term was typed but no matching apps were found.
+				return 1;
+			} else {			
+				return mSearchedAppListItems.size();
+			}
 		}
 	}
 
@@ -122,19 +130,46 @@ public class AppListViewFactory implements RemoteViewsFactory {
 
 	@Override
 	public RemoteViews getLoadingView() {
+		Log.i(TAG, "Returning loading view");
 		return null;
 	}
 
 	@Override
 	public RemoteViews getViewAt(int index) {
+		if ((mSearchString == null || mSearchString.equals("")) && index == 0) {
+			// There's nothing to search for. Return a view
+			// that just prompts the user to type in the app
+			// to look for
+			RemoteViews noSearchTermLayout =
+					new RemoteViews(mContext.getPackageName(),
+							R.layout.no_search_term_layout);
+			
+			Log.i(TAG, "Nothing to search for");
+			
+			return noSearchTermLayout;
+		} else if (mSearchString.length() > 0 && mSearchedAppListItems.size() == 0) {
+			RemoteViews searchFailedLayout =
+					new RemoteViews(mContext.getPackageName(),
+							R.layout.search_failed_layout);
+			Log.i(TAG, "Search failed for " + mSearchString);
+			
+			searchFailedLayout.setTextViewText(R.id.search_failed_for_app,
+					"No apps matching \"" + mSearchString + "\"");
+			
+			return searchFailedLayout;
+		}
+		
 		RemoteViews letterViewLayout =
 				new RemoteViews(mContext.getPackageName(),
 						R.layout.letter_item_layout);
 
 		synchronized (mAppListSynch) {
 			if (index > mSearchedAppListItems.size() - 1) {
+				Log.i(TAG, "Returning null view");
 				return null;
 			}
+			
+			Log.i(TAG, "Returning non-null view");
 			
 			ApplicationListItem applicationListItem = mSearchedAppListItems.get(index);
 			letterViewLayout.setTextViewText(R.id.app_name,
@@ -197,8 +232,6 @@ public class AppListViewFactory implements RemoteViewsFactory {
 					scaledWidth = (int)(iconBitmap.getWidth() * minScaleRatio);
 					scaledHeight = (int)(iconBitmap.getHeight() * minScaleRatio);
 					
-					Log.i(TAG, "Scaling to " + scaledWidth + " x " + scaledHeight);
-					
 //					appIconBitmap = Bitmap.createScaledBitmap(iconBitmap, scaledWidth, scaledHeight, true);
 					appIconBitmap = iconBitmap;
 				}
@@ -215,7 +248,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 
 	@Override
 	public int getViewTypeCount() {
-		return 1;
+		return 3;
 	}
 
 	@Override
@@ -264,17 +297,17 @@ public class AppListViewFactory implements RemoteViewsFactory {
 		
 		// At this time, both, the key input handler and the app search
 		// services are ready to process requests.
-		String searchString = mKeyInputHandler.getLatestInputString();
+		mSearchString = mKeyInputHandler.getLatestInputString();
 		
-		if (searchString.length() > 0) {
+		if (mSearchString.length() > 0) {
 			synchronized (mAppListSynch) {
-				mSearchedAppListItems = mAppSearchService.appListForSearchTerm(searchString);
+				mSearchedAppListItems = mAppSearchService.appListForSearchTerm(mSearchString);
 				mHighlightedSearchResults.clear();
 				
 				// Go through the results and highlight the entered text
 				for (ApplicationListItem appListItem : mSearchedAppListItems) {
 					StringBuffer applicationLabel = new StringBuffer(appListItem.getApplicationLabel());
-					MatchPair matchPair = findSubsequence(applicationLabel.toString(), searchString);
+					MatchPair matchPair = findSubsequence(applicationLabel.toString(), mSearchString);
 					
 					if (matchPair.to != -1 && matchPair.from != -1) {
 						applicationLabel.insert(matchPair.to + 1, "</font>");
