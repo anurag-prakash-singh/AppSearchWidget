@@ -13,6 +13,10 @@ public class ApplicationListItem {
 	private Bitmap mIconBitmap;
 	private String mLabel;
 	private ComponentName mComponentName;
+	// mLaunchCount is the number of times this application has
+	// been launched
+	private int mLaunchCount;
+	private long mLaunchTimeSeconds;
 	// The simplified label is a concatenation of the
 	// string properties of the list item with the following
 	// transformations:
@@ -72,5 +76,28 @@ public class ApplicationListItem {
 	
 	public ComponentName getComponentName() {
 		return mComponentName;
+	}
+	
+	public void setLaunchCount(int launchCount) {
+		mLaunchCount = launchCount;
+	}
+	
+	public void incrementLaunchCount() {
+		mLaunchCount++;
+	}
+	
+	public int getLaunchCount() {
+		return mLaunchCount;
+	}
+	
+	public void setLaunchTimeSeconds(long launchTimeSeconds) {
+		mLaunchTimeSeconds = launchTimeSeconds;
+	}
+	
+	/*
+	 * Returns the last launch time in seconds
+	 */
+	public long getLaunchTime() {
+		return mLaunchTimeSeconds;
 	}
 }

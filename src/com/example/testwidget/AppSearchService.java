@@ -14,11 +14,18 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 public class AppSearchService extends Service {
 	private static String TAG = "Kuikk/AppSearchService";
+	private static int UPDATE_LAUNCH_STATS = 1;
+	
+	public static final String ACTION_APP_LAUNCHED = "com.example.testwidget.ACTION_APP_LAUNCHED";
+	public static final String PACKAGE_NAME_EXTRA = "PACKAGE_NAME";
+	public static final String CLASS_NAME_EXTRA = "CLASS_NAME";
 	
 	// Used to synchronize access to the list of applications/activities
 	private Object mAppListSynch = new Object();
@@ -29,6 +36,26 @@ public class AppSearchService extends Service {
 	private boolean mInitialAppListAvailable = false;
 	private Semaphore mAppListAvailability = null;
 	private PackageUpdater mPackageUpdater = null;
+	private long mLastLaunchTimeSeconds;
+	private boolean mStatsSaverStarted = false;
+	
+	private Handler mLaunchStatsSaverHandler = new Handler() {
+		private long mLastSavedTimeSeconds = 0;
+		
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == UPDATE_LAUNCH_STATS) {
+				if (mLastLaunchTimeSeconds > mLastSavedTimeSeconds) {
+					LaunchCountBookKeeper.saveLaunchStats(AppSearchService.this);
+					mLastSavedTimeSeconds = mLastLaunchTimeSeconds;
+				}
+				
+				// Update every 2 minutes approximately
+				this.sendMessageDelayed(this.obtainMessage(UPDATE_LAUNCH_STATS),
+						120 * 1000);
+			}
+		}		
+	};
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -52,6 +79,38 @@ public class AppSearchService extends Service {
 			Log.i(TAG, "Registered packageUpdater");
 		}
 		
+		if (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_APP_LAUNCHED)) {
+			// Update the launch count for the launched component
+			Log.i(TAG, "Updating launch count");
+			String packageName = intent.getStringExtra(PACKAGE_NAME_EXTRA);
+			String className = intent.getStringExtra(CLASS_NAME_EXTRA);
+			
+			synchronized (mAppListSynch) {
+				for (ApplicationListItem appListItem : mApplicationListItems) {
+					if (appListItem.getComponentName().getPackageName().equals(packageName) &&
+							appListItem.getComponentName().getClassName().equals(className)) {
+						Log.i(TAG, "Updated launchcount for " + packageName + "/" + className);
+						appListItem.incrementLaunchCount();
+						// Set the launch time
+						long currentTimeSeconds = System.currentTimeMillis()/1000;
+						appListItem.setLaunchTimeSeconds(currentTimeSeconds);
+						mLastLaunchTimeSeconds = currentTimeSeconds;
+						
+						// Update the launch count table with this data
+						LaunchCountBookKeeper.updateLaunchStats(appListItem.getComponentName());
+						
+						if (!mStatsSaverStarted) {
+							// Only schedule the thread the first time round
+							mLaunchStatsSaverHandler.sendMessage(mLaunchStatsSaverHandler.obtainMessage(UPDATE_LAUNCH_STATS));
+							mStatsSaverStarted = true;
+						}						
+						
+						break;
+					}
+				}
+			}
+		}
+		
 		return START_STICKY;
 	}
 	
@@ -59,7 +118,7 @@ public class AppSearchService extends Service {
 		ArrayList<ApplicationListItem> foundAppListItems =
 				new ArrayList<ApplicationListItem>();
 		
-		synchronized (mApplicationListItems) {
+		synchronized (mAppListSynch) {
 			// Sometimes, the clients of this service can race with it for
 			// the apps list. This will happen when the list is queried (
 			// such as through this method) before the AppListUpdater has
@@ -94,7 +153,9 @@ public class AppSearchService extends Service {
 				mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 				mApplicationListItems = new ArrayList<ApplicationListItem>();
 				mInstalledPackageNames.clear();
-
+				
+				// Retrieve the stored launch statistics
+				LaunchCountBookKeeper.fetchLaunchStats(AppSearchService.this);
 				List<ResolveInfo> resolveInfoList = packageManager.queryIntentActivities(mainIntent, 0);
 
 				for (ResolveInfo resolveInfo : resolveInfoList) {
@@ -121,8 +182,18 @@ public class AppSearchService extends Service {
 						// and the name of the class within the package (resolveInfo.activityInfo.name).
 						ComponentName componentName = new ComponentName(resolveInfo.activityInfo.packageName,
 								resolveInfo.activityInfo.name);
-						mApplicationListItems.add(new ApplicationListItem(resolveInfo.loadIcon(packageManager), null,
-								label , componentName));
+						ApplicationListItem launchableComponent = new ApplicationListItem(resolveInfo.loadIcon(packageManager), null,
+								label , componentName);
+						
+						// If the launch stats for a component are available, set them
+						LaunchStats launchStats = LaunchCountBookKeeper.getLaunchStats(componentName);						
+						
+						if (launchStats != null) {
+							launchableComponent.setLaunchTimeSeconds(launchStats.getLastLaunchTimeSeconds());
+							launchableComponent.setLaunchCount(launchStats.getUsageCount());
+						}
+						
+						mApplicationListItems.add(launchableComponent);
 					}
 				}
 				

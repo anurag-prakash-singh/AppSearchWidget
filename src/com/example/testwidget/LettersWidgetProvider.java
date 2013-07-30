@@ -89,6 +89,14 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 						KeyInputHandler.ERASE_ALL_KEY);
 				
 				context.startService(eraseAllIntent);
+				
+				// Let the AppSearchService know so that the launch count
+				// can be incremented
+				Intent updateLaunchCountIntent = new Intent(context, AppSearchService.class);
+				updateLaunchCountIntent.setAction(AppSearchService.ACTION_APP_LAUNCHED);
+				updateLaunchCountIntent.putExtra(AppSearchService.PACKAGE_NAME_EXTRA, launchComponent.getPackageName());
+				updateLaunchCountIntent.putExtra(AppSearchService.CLASS_NAME_EXTRA, launchComponent.getClassName());
+				context.startService(updateLaunchCountIntent);				
 			} catch (Exception exception) {
 				exception.printStackTrace();
 				Log.e(TAG, exception.getMessage());

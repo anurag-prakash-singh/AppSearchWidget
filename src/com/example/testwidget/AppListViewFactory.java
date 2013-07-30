@@ -1,6 +1,7 @@
 package com.example.testwidget;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -169,8 +170,6 @@ public class AppListViewFactory implements RemoteViewsFactory {
 				return null;
 			}
 			
-			Log.i(TAG, "Returning non-null view");
-			
 			ApplicationListItem applicationListItem = mSearchedAppListItems.get(index);
 			letterViewLayout.setTextViewText(R.id.app_name,
 					Html.fromHtml(mHighlightedSearchResults.get(index)));
@@ -260,6 +259,15 @@ public class AppListViewFactory implements RemoteViewsFactory {
 	public void onCreate() {		
 	}
 	
+	private void dumpAppSearchedList() {
+		Log.i(TAG, "Searched app list:");
+		
+		for (ApplicationListItem appListItem : mSearchedAppListItems) {
+			Log.i(TAG, "application: " + appListItem.getApplicationLabel() + "; launchTime: " +
+					appListItem.getLaunchTime());
+		}
+	}
+	
 	@Override
 	public void onDataSetChanged() {
 		Log.i(TAG, "Dataset changed.");
@@ -302,6 +310,8 @@ public class AppListViewFactory implements RemoteViewsFactory {
 		if (mSearchString.length() > 0) {
 			synchronized (mAppListSynch) {
 				mSearchedAppListItems = mAppSearchService.appListForSearchTerm(mSearchString);
+				Collections.sort(mSearchedAppListItems, new AppLaunchTimeComparator());
+				dumpAppSearchedList();
 				mHighlightedSearchResults.clear();
 				
 				// Go through the results and highlight the entered text
