@@ -132,7 +132,11 @@ public class AppListViewFactory implements RemoteViewsFactory {
 	@Override
 	public RemoteViews getLoadingView() {
 		Log.i(TAG, "Returning loading view");
-		return null;
+		RemoteViews loadingViewLayout =
+				new RemoteViews(mContext.getPackageName(),
+						R.layout.loading_view_layout);
+		
+		return loadingViewLayout;
 	}
 
 	@Override
@@ -247,7 +251,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 
 	@Override
 	public int getViewTypeCount() {
-		return 3;
+		return 4;
 	}
 
 	@Override

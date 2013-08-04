@@ -4,7 +4,7 @@
     android:dither="false"
     android:variablePadding="false" >
     <item
-        android:drawable="@drawable/btn_keyboard_key_dark_normal_holo"
+        android:drawable="@drawable/btn_keyboard_key_dark_normal_holo_l60"
         android:state_pressed="false"
         />
     <item

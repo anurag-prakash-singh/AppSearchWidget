@@ -20,13 +20,16 @@ public class KeyInputHandler extends Service {
 	private IBinder mAppSearchServiceBinder = new KeyInputHandlerServiceBinder();
 	
 	private StringBuffer mLatestInputString = new StringBuffer(); 
-	private boolean mLatestInputUnread = false;
+	private volatile boolean mLatestInputUnread = false;
 	private String mDeleteKeyValue = null;
 	private String mShiftKeyValue = null;
 	private boolean mShiftMode = false;
 	private boolean mAppSearchServiceStarted = false;
+	private Object mInputUnreadSynch = new Object();
 	
 	private Handler mKickSender = new Handler() {
+		private int mContinuousKickCount = 0;
+		
 		@Override
 		public void handleMessage(Message msg) {
 			if (msg.what == KICK_WIDGET_PROVIDER) {
@@ -34,21 +37,29 @@ public class KeyInputHandler extends Service {
 				// the widget provider with the latest input
 				Log.i(TAG, "Kick received.");
 				
-				if (mLatestInputUnread) {
-					Log.i(TAG, "Kick received. Latest input unread.");
+				synchronized(mInputUnreadSynch) {
+					if (mLatestInputUnread && mContinuousKickCount < 10) {
+						Log.i(TAG, "Kick received. Latest input unread.");
+
+						Intent enteredTextIntent = new Intent(getApplicationContext(),
+								LettersWidgetProvider.class);
+
+						enteredTextIntent.setAction(Constants.TEXT_INTENT);
+						enteredTextIntent.putExtra(Constants.CURRENT_SHIFT_MODE,
+								mShiftMode);
+						enteredTextIntent.putExtra(Constants.TYPED_TEXT, mLatestInputString.toString());
+						getApplicationContext().sendBroadcast(enteredTextIntent);
+
+						// Post this message again
+						Message kickMessage = this.obtainMessage(KICK_WIDGET_PROVIDER);
+						this.sendMessageDelayed(kickMessage, KICK_MESSAGE_SEND_DELAY_MS);
+						
+						mContinuousKickCount++;
+					}
 					
-					Intent enteredTextIntent = new Intent(getApplicationContext(),
-							LettersWidgetProvider.class);
-					
-					enteredTextIntent.setAction(Constants.TEXT_INTENT);
-					enteredTextIntent.putExtra(Constants.CURRENT_SHIFT_MODE,
-							mShiftMode);
-					enteredTextIntent.putExtra(Constants.TYPED_TEXT, mLatestInputString.toString());
-					getApplicationContext().sendBroadcast(enteredTextIntent);
-					
-					// Post this message again
-					Message kickMessage = this.obtainMessage(KICK_WIDGET_PROVIDER);
-					this.sendMessageDelayed(kickMessage, KICK_MESSAGE_SEND_DELAY_MS);
+					if (mLatestInputUnread == false) {
+						mContinuousKickCount = 0;
+					}
 				}
 			}
 		}		
@@ -126,7 +137,10 @@ public class KeyInputHandler extends Service {
 				// Schedule a kick message to be sent after a small delay.
 				// This is to ensure that the widget provider does not
 				// miss the latest input
-				mLatestInputUnread = true;
+				synchronized(mInputUnreadSynch) {
+					mLatestInputUnread = true;
+				}
+				
 				Message kickMessage = mKickSender.obtainMessage(KICK_WIDGET_PROVIDER);
 				mKickSender.sendMessageDelayed(kickMessage, KICK_MESSAGE_SEND_DELAY_MS);
 				
@@ -154,7 +168,10 @@ public class KeyInputHandler extends Service {
 	}
 
 	public String getLatestInputString() {
-		mLatestInputUnread = false;
+		synchronized(mInputUnreadSynch) {
+			Log.i(TAG, "Reading latest input.");
+			mLatestInputUnread = false;
+		}
 		return mLatestInputString.toString();
 	}
 	

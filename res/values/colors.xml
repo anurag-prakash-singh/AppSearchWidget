@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="app_name_bg_color">#FFFFFFFF</color>
+    <color name="app_name_bg_color">#FF222222</color>
     <color name="app_launching_bg_color">#FFDADADA</color>
+    <color name="key_bg_color">#FF919191</color>
+    <color name="widget_bg_color">#FF353535</color>
 </resources>

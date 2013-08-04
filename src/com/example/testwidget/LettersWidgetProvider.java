@@ -47,11 +47,7 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 	private boolean mSpew = false;
 	
 	private AppWidgetManager getAppWidgetManager(Context context) {
-		if (mWidgetManager == null) {
-			mWidgetManager = AppWidgetManager.getInstance(context);
-		}
-		
-		return mWidgetManager;
+		return AppWidgetManager.getInstance(context);
 	}
 	
 	@Override

@@ -1,18 +1,30 @@
 <LinearLayout
-    android:id="@+id/dictionary_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:keychar="http://schemas.android.com/apk/res/com.example.testwidget"
+    android:id="@+id/dictionary_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/btn_keyboard_key_dark_normal_holo" 
     >
     
-    <ListView
-        android:id="@+id/widgetLetterView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40"        
-        ></ListView>
+        android:layout_weight="40"
+        >
+        <ListView
+            android:id="@+id/widgetLetterView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:divider="@color/widget_bg_color"
+            android:dividerHeight="0dp"
+            android:requiresFadingEdge="vertical"
+            android:fadingEdgeLength="20sp"
+            >
+        </ListView>
+        
+    </RelativeLayout>
     
     <LinearLayout 
         android:id="@+id/keyboard"
@@ -33,7 +45,8 @@
         
     <ImageButton
         android:id="@+id/q_button"
-        style="@style/CharKey"        
+        style="@style/CharKey"
+        android:layout_marginLeft="3dp"      
         />
     
     <ImageButton
@@ -74,7 +87,8 @@
     
     <ImageButton
         android:id="@+id/p_button"
-        style="@style/CharKey.Internal"	
+        style="@style/CharKey.Internal"
+        android:layout_marginRight="3dp"
         />
     
     </LinearLayout>
@@ -179,7 +193,7 @@
     
      <ImageButton
         android:id="@+id/m_button"
-        style="@style/CharKey"
+        style="@style/CharKey.Internal"
         />
      
      <ImageButton
