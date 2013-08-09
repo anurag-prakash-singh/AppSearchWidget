@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40"
+        android:layout_weight="1"
         >
         <ListView
             android:id="@+id/widgetLetterView"
@@ -28,11 +28,10 @@
     
     <LinearLayout 
         android:id="@+id/keyboard"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_weight="60"
         android:layout_marginTop="4dp"
-        android:orientation="vertical"
+        android:orientation="vertical"        
 		>
     
     <LinearLayout

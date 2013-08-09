@@ -16,10 +16,9 @@ import android.os.IBinder;
 import android.text.Html;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
-
-
 
 public class AppListViewFactory implements RemoteViewsFactory {
 	private static final String TAG = "Kuikk/AppListViewFactory";
@@ -159,7 +158,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 			Log.i(TAG, "Search failed for " + mSearchString);
 			
 			searchFailedLayout.setTextViewText(R.id.search_failed_for_app,
-					"No apps matching \"" + mSearchString + "\"");
+					Html.fromHtml("No apps matching <font color=\"#33b5e5\">" + mSearchString + "</font>"));
 			
 			return searchFailedLayout;
 		}
@@ -234,8 +233,6 @@ public class AppListViewFactory implements RemoteViewsFactory {
 					
 					scaledWidth = (int)(iconBitmap.getWidth() * minScaleRatio);
 					scaledHeight = (int)(iconBitmap.getHeight() * minScaleRatio);
-					
-//					appIconBitmap = Bitmap.createScaledBitmap(iconBitmap, scaledWidth, scaledHeight, true);
 					appIconBitmap = iconBitmap;
 				}
 				
@@ -283,7 +280,8 @@ public class AppListViewFactory implements RemoteViewsFactory {
 		}
 		
 		if (mAppSearchService == null) {
-			// Get the app search service object.
+			// Indicate to the widget provider that the initial app list
+			// loading process has just been started
 			Intent intent = new Intent(mContext, AppSearchService.class);
 			mContext.bindService(intent, mAppSearchServiceConnection,
 					Context.BIND_AUTO_CREATE);
@@ -329,13 +327,7 @@ public class AppListViewFactory implements RemoteViewsFactory {
 					}
 					
 					mHighlightedSearchResults.add(applicationLabel.toString());
-				}
-				
-				// TODO:
-				// We're also tracking the number of times an application was
-				// selected to run. This means an application that has been selected
-				// more often should appear closer to the top. Arrange the list based
-				// on this information.
+				}				
 			}
 		} else {
 			synchronized (mAppListSynch) {

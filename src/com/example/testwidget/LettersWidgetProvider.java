@@ -19,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -480,6 +481,10 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
+		super.onUpdate(context, appWidgetManager, appWidgetIds);
+
+		Log.i(TAG, "In onUpdate");
+		
 		RemoteViews lettersViewLayout = new RemoteViews(context.getPackageName(),
 				R.layout.dictionary_layout);
 		 
@@ -495,9 +500,7 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 		setBitmapsForKeys(lettersViewLayout, context);
 		setModeKeyBitmap(context, lettersViewLayout);
 		setDeleteKeyBitmap(context, lettersViewLayout);
-		attachPendingIntentsToKeys(context, lettersViewLayout);
-		
-		Log.i(TAG, "In onUpdate");
+		attachPendingIntentsToKeys(context, lettersViewLayout);		
 		
 		appWidgetManager.updateAppWidget(appWidgetIds, lettersViewLayout);		
 		lettersViewLayout.apply(context, null);
@@ -508,8 +511,6 @@ public class LettersWidgetProvider extends AppWidgetProvider {
 			launchTemplateIntent.setAction(Constants.COMPONENT_LAUNCH_INTENT);
 			PendingIntent launchTemplatePendingIntent = PendingIntent.getActivity(context, 0, launchTemplateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			lettersViewLayout.setPendingIntentTemplate(R.id.widgetLetterView, launchTemplatePendingIntent);
-		}
-		
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
+		}		
 	}	
 }
